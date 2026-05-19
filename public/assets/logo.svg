@@ -1,0 +1,13 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+  <!-- Background -->
+  <rect width="200" height="200" fill="none"/>
+  
+  <!-- Navy Triangle (left part of A) -->
+  <polygon points="100,20 60,100 75,100 100,50 125,100 140,100" fill="#0f172a"/>
+  
+  <!-- Gold accent (right curved part, like R) -->
+  <path d="M 130 40 Q 150 40 150 65 Q 150 85 130 85 L 125 100 L 140 100 Q 165 100 165 70 Q 165 40 130 40 Z" fill="#c9a74d"/>
+  
+  <!-- Center triangle highlight -->
+  <polygon points="100,50 85,100 115,100" fill="#c9a74d" opacity="0.8"/>
+</svg>
