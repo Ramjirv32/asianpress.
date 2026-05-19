@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { isRateLimited } from "@/lib/rateLimit";
+import nodemailer from "nodemailer";
 
 export async function POST(request: Request) {
   try {
@@ -19,14 +20,31 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    // Log the details to the console (SMTP is handled by a separate server)
-    console.log("Contact Message Received (handled by separate server):", {
-      name,
-      email,
-      subject,
-      message,
+    // Configure Nodemailer transporter
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
     });
 
+    // Send the email
+    await transporter.sendMail({
+      from: `"${name}" <${process.env.EMAIL_USER}>`,
+      to: process.env.EMAIL_USER, // Sending to the same configured email to receive inquiries
+      replyTo: email,
+      subject: `ARP Contact Form: ${subject}`,
+      text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+      html: `
+        <h3>New Contact Form Submission</h3>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Subject:</strong> ${subject}</p>
+        <p><strong>Message:</strong></p>
+        <p>${message.replace(/\n/g, "<br>")}</p>
+      `,
+    });
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error("Contact form error:", error);
