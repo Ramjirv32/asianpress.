@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   Send, 
   Check, 
@@ -26,6 +26,38 @@ export default function Fellowships() {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [countries, setCountries] = useState<string[]>([]);
+  const [availableColleges, setAvailableColleges] = useState<string[]>([]);
+
+  useEffect(() => {
+    // Fetch unique countries on mount
+    fetch("/api/colleges/countries")
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) setCountries(data.data);
+      })
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    if (formData.country) {
+      // Fetch colleges when country changes
+      fetch(`/api/colleges/by-country?country=${formData.country}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            setAvailableColleges(data.data);
+            // Reset college name if it's not in the new list
+            if (!data.data.includes(formData.collegeName)) {
+              setFormData(prev => ({ ...prev, collegeName: "" }));
+            }
+          }
+        })
+        .catch(console.error);
+    } else {
+      setAvailableColleges([]);
+    }
+  }, [formData.country]);
 
   const scrollToForm = () => {
     document.getElementById("apply-form")?.scrollIntoView({ behavior: "smooth" });
@@ -274,26 +306,37 @@ export default function Fellowships() {
 
               <div className="form-group" style={{ marginBottom: "1.2rem" }}>
                 <label htmlFor="country" style={{ fontWeight: 600, fontSize: "0.9rem", display: "block", marginBottom: "0.5rem" }}>Country <span className="required" style={{ color: "red" }}>*</span></label>
-                <input 
-                  type="text" 
+                <select 
                   id="country" 
                   required 
-                  placeholder="Enter your country"
                   value={formData.country}
                   onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-                />
+                  style={{ width: "100%", padding: "0.8rem", border: "1px solid var(--border)", borderRadius: "4px", background: "white" }}
+                >
+                  <option value="" disabled>Select your country</option>
+                  {countries.map(country => (
+                    <option key={country} value={country}>{country}</option>
+                  ))}
+                </select>
               </div>
 
               <div className="form-group" style={{ marginBottom: "1.2rem" }}>
                 <label htmlFor="collegeName" style={{ fontWeight: 600, fontSize: "0.9rem", display: "block", marginBottom: "0.5rem" }}>College/University Name <span className="required" style={{ color: "red" }}>*</span></label>
-                <input 
-                  type="text" 
+                <select 
                   id="collegeName" 
                   required 
-                  placeholder="Enter your institution name"
                   value={formData.collegeName}
                   onChange={(e) => setFormData({ ...formData, collegeName: e.target.value })}
-                />
+                  style={{ width: "100%", padding: "0.8rem", border: "1px solid var(--border)", borderRadius: "4px", background: "white" }}
+                  disabled={!formData.country || availableColleges.length === 0}
+                >
+                  <option value="" disabled>
+                    {!formData.country ? "Select a country first" : availableColleges.length === 0 ? "No approved colleges found" : "Select your institution"}
+                  </option>
+                  {availableColleges.map(college => (
+                    <option key={college} value={college}>{college}</option>
+                  ))}
+                </select>
               </div>
 
               <div className="form-group" style={{ marginBottom: "1.2rem" }}>

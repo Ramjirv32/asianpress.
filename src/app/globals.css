@@ -79,6 +79,17 @@ ul {
   transform: translateY(-2px);
 }
 
+/* Enforce button colors inside navigation lists */
+.nav-links a.btn-primary {
+  color: var(--primary) !important;
+  background: var(--accent) !important;
+}
+
+.nav-links a.btn-primary:hover {
+  color: var(--primary) !important;
+  background: var(--accent-light) !important;
+}
+
 .btn-outline {
   border: 1px solid var(--accent);
   color: var(--accent);

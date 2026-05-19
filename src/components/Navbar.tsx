@@ -2,12 +2,34 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkLogin = async () => {
+      // First check local cookie (fast path)
+      const hasCookie = document.cookie.split(";").some((item) => item.trim().startsWith("admin_logged_in="));
+      if (hasCookie) {
+        setIsLoggedIn(true);
+        return;
+      }
+      
+      // Fallback: verify with API
+      try {
+        const res = await fetch("/api/auth/session");
+        const data = await res.json();
+        setIsLoggedIn(!!data.loggedIn);
+      } catch {
+        setIsLoggedIn(false);
+      }
+    };
+    checkLogin();
+  }, [pathname]);
 
   const links = [
     { href: "/about", label: "About" },
@@ -16,6 +38,11 @@ export default function Navbar() {
     { href: "/publications", label: "Publications" },
     { href: "/membership", label: "Membership" },
     { href: "/contact", label: "Contact" },
+    { 
+      href: "/admin", 
+      label: isLoggedIn ? "Admin Panel" : "Login", 
+      className: "btn btn-primary" 
+    },
   ];
 
   return (

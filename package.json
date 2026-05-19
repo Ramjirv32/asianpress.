@@ -17,6 +17,9 @@
     "sweetalert2": "^11.26.24"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^3.0.0",
+    "@types/cookie": "^1.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/nodemailer": "^8.0.0",
     "@types/react": "^19",
