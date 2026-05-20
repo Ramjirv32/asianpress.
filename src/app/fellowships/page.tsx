@@ -207,7 +207,7 @@ export default function Fellowships() {
                 <h4 style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
                   <Clock size={18} style={{ color: "var(--accent)" }} /> Duration
                 </h4>
-                <p style={{ fontSize: "0.9rem" }}><strong>1 - 15 years</strong></p>
+                <p style={{ fontSize: "0.9rem" }}><strong>1 - 1.5 years</strong></p>
               </div>
             </div>
             <div>
